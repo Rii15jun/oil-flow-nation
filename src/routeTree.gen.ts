@@ -14,13 +14,18 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AppVendorsRouteImport } from './routes/app.vendors'
 import { Route as AppVehiclesRouteImport } from './routes/app.vehicles'
 import { Route as AppUsersRouteImport } from './routes/app.users'
+import { Route as AppSettingsRouteImport } from './routes/app.settings'
 import { Route as AppRoutesRouteImport } from './routes/app.routes'
 import { Route as AppReportsRouteImport } from './routes/app.reports'
+import { Route as AppQrcodesRouteImport } from './routes/app.qrcodes'
 import { Route as AppPickupsRouteImport } from './routes/app.pickups'
 import { Route as AppPaymentsRouteImport } from './routes/app.payments'
+import { Route as AppNotificationsRouteImport } from './routes/app.notifications'
 import { Route as AppKycRouteImport } from './routes/app.kyc'
+import { Route as AppInvoicesRouteImport } from './routes/app.invoices'
 import { Route as AppInventoryRouteImport } from './routes/app.inventory'
 import { Route as AppDashboardRouteImport } from './routes/app.dashboard'
+import { Route as AppCrmRouteImport } from './routes/app.crm'
 import { Route as AppCollectionsRouteImport } from './routes/app.collections'
 
 const AppRoute = AppRouteImport.update({
@@ -48,6 +53,11 @@ const AppUsersRoute = AppUsersRouteImport.update({
   path: '/users',
   getParentRoute: () => AppRoute,
 } as any)
+const AppSettingsRoute = AppSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppRoutesRoute = AppRoutesRouteImport.update({
   id: '/routes',
   path: '/routes',
@@ -56,6 +66,11 @@ const AppRoutesRoute = AppRoutesRouteImport.update({
 const AppReportsRoute = AppReportsRouteImport.update({
   id: '/reports',
   path: '/reports',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppQrcodesRoute = AppQrcodesRouteImport.update({
+  id: '/qrcodes',
+  path: '/qrcodes',
   getParentRoute: () => AppRoute,
 } as any)
 const AppPickupsRoute = AppPickupsRouteImport.update({
@@ -68,9 +83,19 @@ const AppPaymentsRoute = AppPaymentsRouteImport.update({
   path: '/payments',
   getParentRoute: () => AppRoute,
 } as any)
+const AppNotificationsRoute = AppNotificationsRouteImport.update({
+  id: '/notifications',
+  path: '/notifications',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppKycRoute = AppKycRouteImport.update({
   id: '/kyc',
   path: '/kyc',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppInvoicesRoute = AppInvoicesRouteImport.update({
+  id: '/invoices',
+  path: '/invoices',
   getParentRoute: () => AppRoute,
 } as any)
 const AppInventoryRoute = AppInventoryRouteImport.update({
@@ -83,6 +108,11 @@ const AppDashboardRoute = AppDashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => AppRoute,
 } as any)
+const AppCrmRoute = AppCrmRouteImport.update({
+  id: '/crm',
+  path: '/crm',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppCollectionsRoute = AppCollectionsRouteImport.update({
   id: '/collections',
   path: '/collections',
@@ -93,13 +123,18 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/app': typeof AppRouteWithChildren
   '/app/collections': typeof AppCollectionsRoute
+  '/app/crm': typeof AppCrmRoute
   '/app/dashboard': typeof AppDashboardRoute
   '/app/inventory': typeof AppInventoryRoute
+  '/app/invoices': typeof AppInvoicesRoute
   '/app/kyc': typeof AppKycRoute
+  '/app/notifications': typeof AppNotificationsRoute
   '/app/payments': typeof AppPaymentsRoute
   '/app/pickups': typeof AppPickupsRoute
+  '/app/qrcodes': typeof AppQrcodesRoute
   '/app/reports': typeof AppReportsRoute
   '/app/routes': typeof AppRoutesRoute
+  '/app/settings': typeof AppSettingsRoute
   '/app/users': typeof AppUsersRoute
   '/app/vehicles': typeof AppVehiclesRoute
   '/app/vendors': typeof AppVendorsRoute
@@ -108,13 +143,18 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/app': typeof AppRouteWithChildren
   '/app/collections': typeof AppCollectionsRoute
+  '/app/crm': typeof AppCrmRoute
   '/app/dashboard': typeof AppDashboardRoute
   '/app/inventory': typeof AppInventoryRoute
+  '/app/invoices': typeof AppInvoicesRoute
   '/app/kyc': typeof AppKycRoute
+  '/app/notifications': typeof AppNotificationsRoute
   '/app/payments': typeof AppPaymentsRoute
   '/app/pickups': typeof AppPickupsRoute
+  '/app/qrcodes': typeof AppQrcodesRoute
   '/app/reports': typeof AppReportsRoute
   '/app/routes': typeof AppRoutesRoute
+  '/app/settings': typeof AppSettingsRoute
   '/app/users': typeof AppUsersRoute
   '/app/vehicles': typeof AppVehiclesRoute
   '/app/vendors': typeof AppVendorsRoute
@@ -124,13 +164,18 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/app': typeof AppRouteWithChildren
   '/app/collections': typeof AppCollectionsRoute
+  '/app/crm': typeof AppCrmRoute
   '/app/dashboard': typeof AppDashboardRoute
   '/app/inventory': typeof AppInventoryRoute
+  '/app/invoices': typeof AppInvoicesRoute
   '/app/kyc': typeof AppKycRoute
+  '/app/notifications': typeof AppNotificationsRoute
   '/app/payments': typeof AppPaymentsRoute
   '/app/pickups': typeof AppPickupsRoute
+  '/app/qrcodes': typeof AppQrcodesRoute
   '/app/reports': typeof AppReportsRoute
   '/app/routes': typeof AppRoutesRoute
+  '/app/settings': typeof AppSettingsRoute
   '/app/users': typeof AppUsersRoute
   '/app/vehicles': typeof AppVehiclesRoute
   '/app/vendors': typeof AppVendorsRoute
@@ -141,13 +186,18 @@ export interface FileRouteTypes {
     | '/'
     | '/app'
     | '/app/collections'
+    | '/app/crm'
     | '/app/dashboard'
     | '/app/inventory'
+    | '/app/invoices'
     | '/app/kyc'
+    | '/app/notifications'
     | '/app/payments'
     | '/app/pickups'
+    | '/app/qrcodes'
     | '/app/reports'
     | '/app/routes'
+    | '/app/settings'
     | '/app/users'
     | '/app/vehicles'
     | '/app/vendors'
@@ -156,13 +206,18 @@ export interface FileRouteTypes {
     | '/'
     | '/app'
     | '/app/collections'
+    | '/app/crm'
     | '/app/dashboard'
     | '/app/inventory'
+    | '/app/invoices'
     | '/app/kyc'
+    | '/app/notifications'
     | '/app/payments'
     | '/app/pickups'
+    | '/app/qrcodes'
     | '/app/reports'
     | '/app/routes'
+    | '/app/settings'
     | '/app/users'
     | '/app/vehicles'
     | '/app/vendors'
@@ -171,13 +226,18 @@ export interface FileRouteTypes {
     | '/'
     | '/app'
     | '/app/collections'
+    | '/app/crm'
     | '/app/dashboard'
     | '/app/inventory'
+    | '/app/invoices'
     | '/app/kyc'
+    | '/app/notifications'
     | '/app/payments'
     | '/app/pickups'
+    | '/app/qrcodes'
     | '/app/reports'
     | '/app/routes'
+    | '/app/settings'
     | '/app/users'
     | '/app/vehicles'
     | '/app/vendors'
@@ -225,6 +285,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppUsersRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/settings': {
+      id: '/app/settings'
+      path: '/settings'
+      fullPath: '/app/settings'
+      preLoaderRoute: typeof AppSettingsRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/routes': {
       id: '/app/routes'
       path: '/routes'
@@ -237,6 +304,13 @@ declare module '@tanstack/react-router' {
       path: '/reports'
       fullPath: '/app/reports'
       preLoaderRoute: typeof AppReportsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/qrcodes': {
+      id: '/app/qrcodes'
+      path: '/qrcodes'
+      fullPath: '/app/qrcodes'
+      preLoaderRoute: typeof AppQrcodesRouteImport
       parentRoute: typeof AppRoute
     }
     '/app/pickups': {
@@ -253,11 +327,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppPaymentsRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/notifications': {
+      id: '/app/notifications'
+      path: '/notifications'
+      fullPath: '/app/notifications'
+      preLoaderRoute: typeof AppNotificationsRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/kyc': {
       id: '/app/kyc'
       path: '/kyc'
       fullPath: '/app/kyc'
       preLoaderRoute: typeof AppKycRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/invoices': {
+      id: '/app/invoices'
+      path: '/invoices'
+      fullPath: '/app/invoices'
+      preLoaderRoute: typeof AppInvoicesRouteImport
       parentRoute: typeof AppRoute
     }
     '/app/inventory': {
@@ -274,6 +362,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppDashboardRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/crm': {
+      id: '/app/crm'
+      path: '/crm'
+      fullPath: '/app/crm'
+      preLoaderRoute: typeof AppCrmRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/collections': {
       id: '/app/collections'
       path: '/collections'
@@ -286,13 +381,18 @@ declare module '@tanstack/react-router' {
 
 interface AppRouteChildren {
   AppCollectionsRoute: typeof AppCollectionsRoute
+  AppCrmRoute: typeof AppCrmRoute
   AppDashboardRoute: typeof AppDashboardRoute
   AppInventoryRoute: typeof AppInventoryRoute
+  AppInvoicesRoute: typeof AppInvoicesRoute
   AppKycRoute: typeof AppKycRoute
+  AppNotificationsRoute: typeof AppNotificationsRoute
   AppPaymentsRoute: typeof AppPaymentsRoute
   AppPickupsRoute: typeof AppPickupsRoute
+  AppQrcodesRoute: typeof AppQrcodesRoute
   AppReportsRoute: typeof AppReportsRoute
   AppRoutesRoute: typeof AppRoutesRoute
+  AppSettingsRoute: typeof AppSettingsRoute
   AppUsersRoute: typeof AppUsersRoute
   AppVehiclesRoute: typeof AppVehiclesRoute
   AppVendorsRoute: typeof AppVendorsRoute
@@ -300,13 +400,18 @@ interface AppRouteChildren {
 
 const AppRouteChildren: AppRouteChildren = {
   AppCollectionsRoute: AppCollectionsRoute,
+  AppCrmRoute: AppCrmRoute,
   AppDashboardRoute: AppDashboardRoute,
   AppInventoryRoute: AppInventoryRoute,
+  AppInvoicesRoute: AppInvoicesRoute,
   AppKycRoute: AppKycRoute,
+  AppNotificationsRoute: AppNotificationsRoute,
   AppPaymentsRoute: AppPaymentsRoute,
   AppPickupsRoute: AppPickupsRoute,
+  AppQrcodesRoute: AppQrcodesRoute,
   AppReportsRoute: AppReportsRoute,
   AppRoutesRoute: AppRoutesRoute,
+  AppSettingsRoute: AppSettingsRoute,
   AppUsersRoute: AppUsersRoute,
   AppVehiclesRoute: AppVehiclesRoute,
   AppVendorsRoute: AppVendorsRoute,
