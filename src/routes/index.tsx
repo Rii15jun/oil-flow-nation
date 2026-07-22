@@ -7,19 +7,19 @@ import { Card, CardContent } from "@/components/ui/card";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
 import { ROLES, type Role } from "@/lib/mock-data";
 import { setSession } from "@/lib/session";
-import { Droplets, Truck, Shield, MapPin, ArrowRight, Leaf } from "lucide-react";
+import { Droplets, Truck, Shield, MapPin, ArrowRight, Coins } from "lucide-react";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Kissan UCO Connect — Nationwide Used Cooking Oil Collection" },
+      { title: "UCOIN App — Powered by Kissan Energy India Pvt. Ltd." },
       {
         name: "description",
         content:
-          "Enterprise platform to onboard restaurants, run KYC, dispatch pickups and track UCO collections across India.",
+          "UCOIN App — enterprise platform to onboard restaurants, run KYC, dispatch pickups and track UCO collections across India.",
       },
-      { property: "og:title", content: "Kissan UCO Connect" },
-      { property: "og:description", content: "Manage the complete UCO collection lifecycle across India." },
+      { property: "og:title", content: "UCOIN App" },
+      { property: "og:description", content: "Manage the complete UCO collection lifecycle across India. Powered by Kissan Energy India Pvt. Ltd." },
     ],
   }),
   component: Landing,
@@ -174,15 +174,15 @@ function Landing() {
 function Brand({ dark = false }: { dark?: boolean }) {
   return (
     <div className="flex items-center gap-3">
-      <div className="h-10 w-10 rounded-lg bg-primary flex items-center justify-center text-primary-foreground">
-        <Leaf className="h-5 w-5" />
+      <div className="h-11 w-11 rounded-xl bg-primary flex items-center justify-center text-primary-foreground shadow-lg shadow-primary/30">
+        <Coins className="h-6 w-6" />
       </div>
       <div>
         <div className={`text-lg font-semibold leading-tight ${dark ? "text-foreground" : ""}`}>
-          Kissan UCO Connect
+          UCOIN App
         </div>
         <div className={`text-xs ${dark ? "text-muted-foreground" : "text-sidebar-foreground/60"}`}>
-          Kissan Energy India Pvt. Ltd.
+          Powered by Kissan Energy India Pvt. Ltd.
         </div>
       </div>
     </div>
