@@ -13,8 +13,9 @@ export const Route = createFileRoute("/app/users")({
 
 const USERS = [
   { name: "Anita Verma", email: "anita@kissan.in", role: "super_admin", state: "All India" },
-  { name: "Rajesh Nair", email: "rajesh@kissan.in", role: "state_manager", state: "Maharashtra" },
-  { name: "Priya Iyer", email: "priya@kissan.in", role: "state_manager", state: "Karnataka" },
+  { name: "Rajesh Nair", email: "rajesh@kissan.in", role: "manager", state: "Maharashtra" },
+  { name: "Priya Iyer", email: "priya@kissan.in", role: "manager", state: "Karnataka" },
+  { name: "Meera Shah", email: "meera@kissan.in", role: "accounts", state: "All India" },
   { name: "Suresh K.", email: "suresh@kissan.in", role: "executive", state: "Mumbai" },
   { name: "Manoj Kumar", email: "manoj@kissan.in", role: "driver", state: "Pune" },
   { name: "Deepak Rao", email: "deepak@kissan.in", role: "executive", state: "Bengaluru" },
