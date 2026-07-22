@@ -8,12 +8,13 @@ import { Badge } from "@/components/ui/badge";
 import {
   Building2, Droplets, Truck, Wallet, Leaf, ClipboardCheck, MapPin,
   TrendingUp, Camera, Navigation, CheckCircle2, ShieldCheck, QrCode,
+  FileText, AlertCircle, CircleDollarSign, Receipt,
 } from "lucide-react";
 import {
   ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip, CartesianGrid,
-  BarChart, Bar, PieChart, Pie, Cell, Legend,
+  BarChart, Bar, PieChart, Pie, Cell, Legend, LineChart, Line,
 } from "recharts";
-import { monthlyCollection, stateCollection, dailyCollection, pickups, vendors } from "@/lib/mock-data";
+import { monthlyCollection, stateCollection, dailyCollection, pickups, vendors, invoices, paymentTrend } from "@/lib/mock-data";
 
 export const Route = createFileRoute("/app/dashboard")({
   component: Dashboard,
@@ -26,12 +27,14 @@ function Dashboard() {
 
   switch (session.role) {
     case "super_admin": return <AdminDash />;
-    case "state_manager": return <StateDash />;
+    case "manager": return <ManagerDash />;
+    case "accounts": return <AccountsDash />;
     case "executive": return <ExecDash />;
     case "driver": return <DriverDash />;
     case "vendor": return <VendorDash />;
   }
 }
+
 
 function AdminDash() {
   return (
@@ -174,12 +177,12 @@ function Impact({ icon: Icon, label, value }: { icon: React.ComponentType<{ clas
   );
 }
 
-function StateDash() {
+function ManagerDash() {
   return (
     <>
-      <PageHeader title="Maharashtra — State Dashboard" subtitle="Your assigned region" />
+      <PageHeader title="Regional Dashboard" subtitle="Your assigned regions — Maharashtra & Gujarat" />
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <StatCard label="State collection (MTD)" value="1,84,220 kg" icon={Droplets} />
+        <StatCard label="Region collection (MTD)" value="1,84,220 kg" icon={Droplets} />
         <StatCard label="Vendors" value="18,412" icon={Building2} tone="success" />
         <StatCard label="Field teams" value="42" icon={Truck} tone="info" />
         <StatCard label="Pending KYC" value="27" icon={ShieldCheck} tone="warning" />
@@ -201,6 +204,108 @@ function StateDash() {
     </>
   );
 }
+
+function AccountsDash() {
+  const paid = invoices.filter((i) => i.status === "Paid");
+  const pending = invoices.filter((i) => i.status === "Sent" || i.status === "Draft");
+  const overdue = invoices.filter((i) => i.status === "Overdue");
+  const totalPaid = paid.reduce((s, i) => s + i.amount, 0);
+  const totalPending = pending.reduce((s, i) => s + i.amount, 0);
+  const totalOverdue = overdue.reduce((s, i) => s + i.amount, 0);
+  const dist = [
+    { name: "Paid", v: paid.length },
+    { name: "Sent", v: invoices.filter((i) => i.status === "Sent").length },
+    { name: "Draft", v: invoices.filter((i) => i.status === "Draft").length },
+    { name: "Overdue", v: overdue.length },
+    { name: "Cancelled", v: invoices.filter((i) => i.status === "Cancelled").length },
+  ];
+  const colors = ["var(--color-primary)", "var(--color-info)", "var(--color-muted-foreground)", "var(--color-warning)", "var(--color-destructive)"];
+
+  return (
+    <>
+      <PageHeader
+        title="Accounts Dashboard"
+        subtitle="Invoices, payments and vendor financials"
+        actions={<Button><FileText className="h-4 w-4 mr-2" /> Generate invoice</Button>}
+      />
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <StatCard label="Invoices generated" value={invoices.length.toString()} icon={FileText} />
+        <StatCard label="Pending invoices" value={pending.length.toString()} icon={Receipt} tone="warning" />
+        <StatCard label="Paid invoices" value={paid.length.toString()} icon={CheckCircle2} tone="success" />
+        <StatCard label="Overdue" value={overdue.length.toString()} icon={AlertCircle} tone="warning" />
+      </div>
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mt-4">
+        <StatCard label="Vendor payments (MTD)" value={`₹ ${(totalPaid / 100000).toFixed(1)}L`} icon={CircleDollarSign} tone="success" />
+        <StatCard label="Outstanding balance" value={`₹ ${(totalPending / 100000).toFixed(1)}L`} icon={Wallet} tone="warning" />
+        <StatCard label="Overdue amount" value={`₹ ${(totalOverdue / 100000).toFixed(1)}L`} icon={AlertCircle} tone="warning" />
+        <StatCard label="Avg invoice" value={`₹ ${Math.round(invoices.reduce((s, i) => s + i.amount, 0) / invoices.length).toLocaleString("en-IN")}`} icon={TrendingUp} tone="info" />
+      </div>
+
+      <div className="grid lg:grid-cols-3 gap-4 mt-6">
+        <Card className="lg:col-span-2">
+          <CardHeader><CardTitle>Payment trends</CardTitle></CardHeader>
+          <CardContent className="h-72">
+            <ResponsiveContainer>
+              <LineChart data={paymentTrend}>
+                <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" />
+                <XAxis dataKey="month" stroke="var(--color-muted-foreground)" fontSize={12} />
+                <YAxis stroke="var(--color-muted-foreground)" fontSize={12} />
+                <Tooltip contentStyle={{ background: "var(--color-card)", border: "1px solid var(--color-border)", borderRadius: 8 }} />
+                <Legend />
+                <Line dataKey="paid" stroke="var(--color-primary)" strokeWidth={2} dot={{ r: 3 }} />
+                <Line dataKey="pending" stroke="var(--color-warning)" strokeWidth={2} dot={{ r: 3 }} />
+              </LineChart>
+            </ResponsiveContainer>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader><CardTitle>Invoice status</CardTitle></CardHeader>
+          <CardContent className="h-72">
+            <ResponsiveContainer>
+              <PieChart>
+                <Pie data={dist} dataKey="v" nameKey="name" innerRadius={45} outerRadius={80}>
+                  {dist.map((_, i) => <Cell key={i} fill={colors[i % colors.length]} />)}
+                </Pie>
+                <Tooltip contentStyle={{ background: "var(--color-card)", border: "1px solid var(--color-border)", borderRadius: 8 }} />
+                <Legend />
+              </PieChart>
+            </ResponsiveContainer>
+          </CardContent>
+        </Card>
+      </div>
+
+      <Card className="mt-6">
+        <CardHeader className="flex flex-row items-center justify-between">
+          <CardTitle>Recent transactions</CardTitle>
+          <Button variant="ghost" size="sm">View all</Button>
+        </CardHeader>
+        <CardContent className="p-0 overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead className="bg-muted/50 text-muted-foreground text-xs uppercase">
+              <tr>
+                {["Invoice", "Vendor", "Date", "Amount", "Status"].map((h) => (
+                  <th key={h} className="text-left px-4 py-3 font-medium">{h}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {invoices.slice(0, 8).map((inv) => (
+                <tr key={inv.id} className="border-t">
+                  <td className="px-4 py-3 font-mono text-xs">{inv.id}</td>
+                  <td className="px-4 py-3 font-medium">{inv.vendor}</td>
+                  <td className="px-4 py-3 text-muted-foreground">{inv.date}</td>
+                  <td className="px-4 py-3">₹ {inv.amount.toLocaleString("en-IN")}</td>
+                  <td className="px-4 py-3"><StatusBadge status={inv.status} /></td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </CardContent>
+      </Card>
+    </>
+  );
+}
+
 
 function ExecDash() {
   const todays = pickups.slice(0, 5);
