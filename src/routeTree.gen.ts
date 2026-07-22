@@ -11,6 +11,17 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as AppRouteImport } from './routes/app'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AppVendorsRouteImport } from './routes/app.vendors'
+import { Route as AppVehiclesRouteImport } from './routes/app.vehicles'
+import { Route as AppUsersRouteImport } from './routes/app.users'
+import { Route as AppRoutesRouteImport } from './routes/app.routes'
+import { Route as AppReportsRouteImport } from './routes/app.reports'
+import { Route as AppPickupsRouteImport } from './routes/app.pickups'
+import { Route as AppPaymentsRouteImport } from './routes/app.payments'
+import { Route as AppKycRouteImport } from './routes/app.kyc'
+import { Route as AppInventoryRouteImport } from './routes/app.inventory'
+import { Route as AppDashboardRouteImport } from './routes/app.dashboard'
+import { Route as AppCollectionsRouteImport } from './routes/app.collections'
 
 const AppRoute = AppRouteImport.update({
   id: '/app',
@@ -22,31 +33,159 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AppVendorsRoute = AppVendorsRouteImport.update({
+  id: '/vendors',
+  path: '/vendors',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppVehiclesRoute = AppVehiclesRouteImport.update({
+  id: '/vehicles',
+  path: '/vehicles',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppUsersRoute = AppUsersRouteImport.update({
+  id: '/users',
+  path: '/users',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppRoutesRoute = AppRoutesRouteImport.update({
+  id: '/routes',
+  path: '/routes',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppReportsRoute = AppReportsRouteImport.update({
+  id: '/reports',
+  path: '/reports',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppPickupsRoute = AppPickupsRouteImport.update({
+  id: '/pickups',
+  path: '/pickups',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppPaymentsRoute = AppPaymentsRouteImport.update({
+  id: '/payments',
+  path: '/payments',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppKycRoute = AppKycRouteImport.update({
+  id: '/kyc',
+  path: '/kyc',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppInventoryRoute = AppInventoryRouteImport.update({
+  id: '/inventory',
+  path: '/inventory',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppDashboardRoute = AppDashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppCollectionsRoute = AppCollectionsRouteImport.update({
+  id: '/collections',
+  path: '/collections',
+  getParentRoute: () => AppRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/app': typeof AppRoute
+  '/app': typeof AppRouteWithChildren
+  '/app/collections': typeof AppCollectionsRoute
+  '/app/dashboard': typeof AppDashboardRoute
+  '/app/inventory': typeof AppInventoryRoute
+  '/app/kyc': typeof AppKycRoute
+  '/app/payments': typeof AppPaymentsRoute
+  '/app/pickups': typeof AppPickupsRoute
+  '/app/reports': typeof AppReportsRoute
+  '/app/routes': typeof AppRoutesRoute
+  '/app/users': typeof AppUsersRoute
+  '/app/vehicles': typeof AppVehiclesRoute
+  '/app/vendors': typeof AppVendorsRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/app': typeof AppRoute
+  '/app': typeof AppRouteWithChildren
+  '/app/collections': typeof AppCollectionsRoute
+  '/app/dashboard': typeof AppDashboardRoute
+  '/app/inventory': typeof AppInventoryRoute
+  '/app/kyc': typeof AppKycRoute
+  '/app/payments': typeof AppPaymentsRoute
+  '/app/pickups': typeof AppPickupsRoute
+  '/app/reports': typeof AppReportsRoute
+  '/app/routes': typeof AppRoutesRoute
+  '/app/users': typeof AppUsersRoute
+  '/app/vehicles': typeof AppVehiclesRoute
+  '/app/vendors': typeof AppVendorsRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/app': typeof AppRoute
+  '/app': typeof AppRouteWithChildren
+  '/app/collections': typeof AppCollectionsRoute
+  '/app/dashboard': typeof AppDashboardRoute
+  '/app/inventory': typeof AppInventoryRoute
+  '/app/kyc': typeof AppKycRoute
+  '/app/payments': typeof AppPaymentsRoute
+  '/app/pickups': typeof AppPickupsRoute
+  '/app/reports': typeof AppReportsRoute
+  '/app/routes': typeof AppRoutesRoute
+  '/app/users': typeof AppUsersRoute
+  '/app/vehicles': typeof AppVehiclesRoute
+  '/app/vendors': typeof AppVendorsRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/app'
+  fullPaths:
+    | '/'
+    | '/app'
+    | '/app/collections'
+    | '/app/dashboard'
+    | '/app/inventory'
+    | '/app/kyc'
+    | '/app/payments'
+    | '/app/pickups'
+    | '/app/reports'
+    | '/app/routes'
+    | '/app/users'
+    | '/app/vehicles'
+    | '/app/vendors'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/app'
-  id: '__root__' | '/' | '/app'
+  to:
+    | '/'
+    | '/app'
+    | '/app/collections'
+    | '/app/dashboard'
+    | '/app/inventory'
+    | '/app/kyc'
+    | '/app/payments'
+    | '/app/pickups'
+    | '/app/reports'
+    | '/app/routes'
+    | '/app/users'
+    | '/app/vehicles'
+    | '/app/vendors'
+  id:
+    | '__root__'
+    | '/'
+    | '/app'
+    | '/app/collections'
+    | '/app/dashboard'
+    | '/app/inventory'
+    | '/app/kyc'
+    | '/app/payments'
+    | '/app/pickups'
+    | '/app/reports'
+    | '/app/routes'
+    | '/app/users'
+    | '/app/vehicles'
+    | '/app/vendors'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  AppRoute: typeof AppRoute
+  AppRoute: typeof AppRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
@@ -65,12 +204,119 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/app/vendors': {
+      id: '/app/vendors'
+      path: '/vendors'
+      fullPath: '/app/vendors'
+      preLoaderRoute: typeof AppVendorsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/vehicles': {
+      id: '/app/vehicles'
+      path: '/vehicles'
+      fullPath: '/app/vehicles'
+      preLoaderRoute: typeof AppVehiclesRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/users': {
+      id: '/app/users'
+      path: '/users'
+      fullPath: '/app/users'
+      preLoaderRoute: typeof AppUsersRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/routes': {
+      id: '/app/routes'
+      path: '/routes'
+      fullPath: '/app/routes'
+      preLoaderRoute: typeof AppRoutesRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/reports': {
+      id: '/app/reports'
+      path: '/reports'
+      fullPath: '/app/reports'
+      preLoaderRoute: typeof AppReportsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/pickups': {
+      id: '/app/pickups'
+      path: '/pickups'
+      fullPath: '/app/pickups'
+      preLoaderRoute: typeof AppPickupsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/payments': {
+      id: '/app/payments'
+      path: '/payments'
+      fullPath: '/app/payments'
+      preLoaderRoute: typeof AppPaymentsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/kyc': {
+      id: '/app/kyc'
+      path: '/kyc'
+      fullPath: '/app/kyc'
+      preLoaderRoute: typeof AppKycRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/inventory': {
+      id: '/app/inventory'
+      path: '/inventory'
+      fullPath: '/app/inventory'
+      preLoaderRoute: typeof AppInventoryRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/dashboard': {
+      id: '/app/dashboard'
+      path: '/dashboard'
+      fullPath: '/app/dashboard'
+      preLoaderRoute: typeof AppDashboardRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/collections': {
+      id: '/app/collections'
+      path: '/collections'
+      fullPath: '/app/collections'
+      preLoaderRoute: typeof AppCollectionsRouteImport
+      parentRoute: typeof AppRoute
+    }
   }
 }
 
+interface AppRouteChildren {
+  AppCollectionsRoute: typeof AppCollectionsRoute
+  AppDashboardRoute: typeof AppDashboardRoute
+  AppInventoryRoute: typeof AppInventoryRoute
+  AppKycRoute: typeof AppKycRoute
+  AppPaymentsRoute: typeof AppPaymentsRoute
+  AppPickupsRoute: typeof AppPickupsRoute
+  AppReportsRoute: typeof AppReportsRoute
+  AppRoutesRoute: typeof AppRoutesRoute
+  AppUsersRoute: typeof AppUsersRoute
+  AppVehiclesRoute: typeof AppVehiclesRoute
+  AppVendorsRoute: typeof AppVendorsRoute
+}
+
+const AppRouteChildren: AppRouteChildren = {
+  AppCollectionsRoute: AppCollectionsRoute,
+  AppDashboardRoute: AppDashboardRoute,
+  AppInventoryRoute: AppInventoryRoute,
+  AppKycRoute: AppKycRoute,
+  AppPaymentsRoute: AppPaymentsRoute,
+  AppPickupsRoute: AppPickupsRoute,
+  AppReportsRoute: AppReportsRoute,
+  AppRoutesRoute: AppRoutesRoute,
+  AppUsersRoute: AppUsersRoute,
+  AppVehiclesRoute: AppVehiclesRoute,
+  AppVendorsRoute: AppVendorsRoute,
+}
+
+const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  AppRoute: AppRoute,
+  AppRoute: AppRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
