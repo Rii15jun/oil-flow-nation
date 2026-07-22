@@ -12,14 +12,14 @@ import { Droplets, Truck, Shield, MapPin, ArrowRight, Coins } from "lucide-react
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "UCOIN App — Powered by Kissan Energy India Pvt. Ltd." },
+      { title: "UCOIN App — Powered by Riya" },
       {
         name: "description",
         content:
           "UCOIN App — enterprise platform to onboard restaurants, run KYC, dispatch pickups and track UCO collections across India.",
       },
-      { property: "og:title", content: "UCOIN App" },
-      { property: "og:description", content: "Manage the complete UCO collection lifecycle across India. Powered by Kissan Energy India Pvt. Ltd." },
+      { property: "og:title", content: "UCOIN App — Powered by Riya" },
+      { property: "og:description", content: "UCOIN App — enterprise platform to onboard restaurants, run KYC, dispatch pickups and track UCO collections across India." },
     ],
   }),
   component: Landing,

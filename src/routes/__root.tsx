@@ -77,12 +77,16 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "UCOIN App — Powered by Kissan Energy India Pvt. Ltd." },
-      { name: "description", content: "UCOIN App — nationwide Used Cooking Oil collection management by Kissan Energy India Pvt. Ltd." },
-      { property: "og:title", content: "UCOIN App" },
-      { property: "og:description", content: "Manage the complete UCO collection lifecycle across India. Powered by Kissan Energy India Pvt. Ltd." },
+      { title: "UCOIN App — Powered by Riya" },
+      { name: "description", content: "UCOIN App — enterprise platform to onboard restaurants, run KYC, dispatch pickups and track UCO collections across India." },
+      { property: "og:title", content: "UCOIN App — Powered by Riya" },
+      { property: "og:description", content: "UCOIN App — enterprise platform to onboard restaurants, run KYC, dispatch pickups and track UCO collections across India." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "UCOIN App — Powered by Riya" },
+      { name: "twitter:description", content: "UCOIN App — enterprise platform to onboard restaurants, run KYC, dispatch pickups and track UCO collections across India." },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/8472b86d-6b9c-457b-8867-3f74e7ca6a7a/id-preview-0cf38efe--9bafe20c-abc9-481d-b607-56399b1040b2.lovable.app-1784702821792.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/8472b86d-6b9c-457b-8867-3f74e7ca6a7a/id-preview-0cf38efe--9bafe20c-abc9-481d-b607-56399b1040b2.lovable.app-1784702821792.png" },
     ],
     links: [
       {
