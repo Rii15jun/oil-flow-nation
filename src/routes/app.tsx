@@ -1,5 +1,5 @@
 import { createFileRoute, Link, Outlet, useNavigate, useRouterState } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
   LayoutDashboard, Users, ClipboardCheck, Truck, PackageOpen, Route as RouteIcon,
   FileBarChart, Wallet, QrCode, Bell, Search, LogOut, Menu, Building2, ShieldCheck,
@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { clearSession, getSession, setSession, type Session } from "@/lib/session";
+import { signOut, useAuthSession } from "@/lib/session";
 import { ROLES, type Role } from "@/lib/mock-data";
 
 export const Route = createFileRoute("/app")({
@@ -89,32 +89,34 @@ const NAV_BY_ROLE: Record<Role, NavItem[]> = {
 
 function AppShell() {
   const navigate = useNavigate();
-  const [session, setLocal] = useState<Session | null>(null);
+  const { user, loading } = useAuthSession();
   const [open, setOpen] = useState(false);
 
-  useEffect(() => {
-    const s = getSession();
-    if (!s) {
-      navigate({ to: "/" });
-      return;
-    }
-    setLocal(s);
-  }, [navigate]);
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center text-muted-foreground text-sm">
+        Loading…
+      </div>
+    );
+  }
 
-  if (!session) return null;
-  const nav = NAV_BY_ROLE[session.role];
+  if (!user) {
+    if (typeof window !== "undefined") navigate({ to: "/" });
+    return null;
+  }
 
-  const switchRole = (role: Role) => {
-    const updated = { ...session, role, name: ROLES.find((r) => r.value === role)!.label };
-    setSession(updated);
-    setLocal(updated);
-    navigate({ to: "/app/dashboard" });
+  const nav = NAV_BY_ROLE[user.role];
+  const roleLabel = ROLES.find((r) => r.value === user.role)?.label ?? "User";
+
+  const handleSignOut = async () => {
+    await signOut();
+    navigate({ to: "/" });
   };
 
   return (
     <div className="min-h-screen flex bg-muted/30">
       <aside className="hidden lg:flex w-64 flex-col bg-sidebar text-sidebar-foreground shrink-0">
-        <SidebarContent nav={nav} role={session.role} />
+        <SidebarContent nav={nav} role={user.role} />
       </aside>
 
       <div className="flex-1 flex flex-col min-w-0">
@@ -126,7 +128,7 @@ function AppShell() {
               </Button>
             </SheetTrigger>
             <SheetContent side="left" className="p-0 w-64 bg-sidebar text-sidebar-foreground border-sidebar-border">
-              <SidebarContent nav={nav} role={session.role} onNavigate={() => setOpen(false)} />
+              <SidebarContent nav={nav} role={user.role} onNavigate={() => setOpen(false)} />
             </SheetContent>
           </Sheet>
 
@@ -148,32 +150,27 @@ function AppShell() {
               <button className="flex items-center gap-2 pl-2 pr-3 h-10 rounded-md hover:bg-muted shrink-0">
                 <Avatar className="h-8 w-8">
                   <AvatarFallback className="bg-primary text-primary-foreground text-xs">
-                    {session.name.split(" ").map((w) => w[0]).slice(0, 2).join("")}
+                    {user.name.split(" ").map((w: string) => w[0]).slice(0, 2).join("")}
                   </AvatarFallback>
                 </Avatar>
                 <div className="hidden sm:block text-left">
-                  <div className="text-sm font-medium leading-tight">{session.name}</div>
-                  <div className="text-xs text-muted-foreground leading-tight">{session.phone}</div>
+                  <div className="text-sm font-medium leading-tight">{user.name}</div>
+                  <div className="text-xs text-muted-foreground leading-tight">{roleLabel}</div>
                 </div>
               </button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-56">
-              <DropdownMenuLabel>Switch role (demo)</DropdownMenuLabel>
-              {ROLES.map((r) => (
-                <DropdownMenuItem key={r.value} onClick={() => switchRole(r.value)}>
-                  {r.label}
-                  {r.value === session.role && (
-                    <Badge variant="secondary" className="ml-auto text-[10px]">current</Badge>
-                  )}
-                </DropdownMenuItem>
-              ))}
+              <DropdownMenuLabel>
+                <div className="text-xs font-normal text-muted-foreground">Signed in as</div>
+                <div className="text-sm truncate">{user.email}</div>
+              </DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem
-                onClick={() => {
-                  clearSession();
-                  navigate({ to: "/" });
-                }}
-              >
+              <DropdownMenuItem disabled>
+                <Badge variant="secondary" className="mr-2 text-[10px]">{roleLabel}</Badge>
+                Your role
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={handleSignOut}>
                 <LogOut className="h-4 w-4 mr-2" /> Sign out
               </DropdownMenuItem>
             </DropdownMenuContent>

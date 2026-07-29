@@ -1,6 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
-import { getSession, type Session } from "@/lib/session";
+import { useAuthSession } from "@/lib/session";
 import { PageHeader, StatCard, StatusBadge } from "@/components/page-shell";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -21,11 +20,10 @@ export const Route = createFileRoute("/app/dashboard")({
 });
 
 function Dashboard() {
-  const [session, setS] = useState<Session | null>(null);
-  useEffect(() => setS(getSession()), []);
-  if (!session) return null;
+  const { user } = useAuthSession();
+  if (!user) return null;
 
-  switch (session.role) {
+  switch (user.role) {
     case "super_admin": return <AdminDash />;
     case "manager": return <ManagerDash />;
     case "accounts": return <AccountsDash />;

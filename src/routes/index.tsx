@@ -1,57 +1,87 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
-import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
-import { ROLES, type Role } from "@/lib/mock-data";
-import { setSession } from "@/lib/session";
-import { Droplets, Truck, Shield, MapPin, ArrowRight, Coins } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { lovable } from "@/integrations/lovable/index";
+import { toast } from "sonner";
+import { ArrowRight, Coins, Loader2 } from "lucide-react";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "UCOIN App — Powered by Riya" },
-      {
-        name: "description",
-        content:
-          "UCOIN App — enterprise platform to onboard restaurants, run KYC, dispatch pickups and track UCO collections across India.",
-      },
-      { property: "og:title", content: "UCOIN App — Powered by Riya" },
-      { property: "og:description", content: "UCOIN App — enterprise platform to onboard restaurants, run KYC, dispatch pickups and track UCO collections across India." },
+      { title: "Sign in — UCOIN App" },
+      { name: "description", content: "Sign in to the UCOIN App by Kissan Energy India — manage UCO collections, vendors, pickups, invoices and payments across India." },
+      { property: "og:title", content: "Sign in — UCOIN App" },
+      { property: "og:description", content: "Sign in to the UCOIN App by Kissan Energy India — manage UCO collections, vendors, pickups, invoices and payments across India." },
     ],
   }),
   component: Landing,
 });
 
 function Landing() {
-  const [step, setStep] = useState<"phone" | "otp" | "role">("phone");
-  const [phone, setPhone] = useState("");
-  const [otp, setOtp] = useState("");
-  const [role, setRole] = useState<Role>("super_admin");
   const navigate = useNavigate();
+  const [mode, setMode] = useState<"signin" | "signup">("signin");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [name, setName] = useState("");
+  const [busy, setBusy] = useState(false);
 
-  const sendOtp = () => {
-    if (phone.replace(/\D/g, "").length < 10) return;
-    setStep("otp");
-  };
-  const verifyOtp = () => {
-    if (otp.length !== 6) return;
-    setStep("role");
-  };
-  const enter = () => {
-    setSession({
-      phone,
-      role,
-      name: ROLES.find((r) => r.value === role)?.label ?? "User",
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data }) => {
+      if (data.session) navigate({ to: "/app/dashboard" });
     });
-    navigate({ to: "/app/dashboard" });
+    const { data: sub } = supabase.auth.onAuthStateChange((_e, session) => {
+      if (session) navigate({ to: "/app/dashboard" });
+    });
+    return () => sub.subscription.unsubscribe();
+  }, [navigate]);
+
+  const submit = async () => {
+    if (!email || !password) {
+      toast.error("Enter email and password");
+      return;
+    }
+    setBusy(true);
+    try {
+      if (mode === "signup") {
+        const { error } = await supabase.auth.signUp({
+          email,
+          password,
+          options: {
+            emailRedirectTo: `${window.location.origin}/app/dashboard`,
+            data: { full_name: name || email },
+          },
+        });
+        if (error) throw error;
+        toast.success("Account created. You can sign in.");
+        setMode("signin");
+      } else {
+        const { error } = await supabase.auth.signInWithPassword({ email, password });
+        if (error) throw error;
+      }
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Auth failed");
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const google = async () => {
+    setBusy(true);
+    const result = await lovable.auth.signInWithOAuth("google", {
+      redirect_uri: window.location.origin,
+    });
+    if (result.error) {
+      toast.error(result.error.message ?? "Google sign-in failed");
+      setBusy(false);
+    }
   };
 
   return (
     <div className="min-h-screen grid lg:grid-cols-2">
-      {/* Left brand panel */}
       <div className="hidden lg:flex flex-col justify-between bg-sidebar text-sidebar-foreground p-12 relative overflow-hidden">
         <div className="absolute -top-24 -right-24 h-96 w-96 rounded-full bg-primary/20 blur-3xl" />
         <div className="absolute bottom-0 -left-24 h-96 w-96 rounded-full bg-primary/10 blur-3xl" />
@@ -73,93 +103,59 @@ function Landing() {
         </div>
       </div>
 
-      {/* Right auth panel */}
       <div className="flex items-center justify-center p-6 sm:p-12 bg-background">
         <div className="w-full max-w-md">
           <div className="lg:hidden mb-8"><Brand dark /></div>
 
-          {step === "phone" && (
-            <>
-              <h1 className="text-2xl font-semibold tracking-tight">Sign in</h1>
-              <p className="text-muted-foreground mt-1 text-sm">
-                We'll send a 6-digit OTP to your registered mobile.
-              </p>
-              <div className="mt-8 space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="phone">Mobile number</Label>
-                  <div className="flex gap-2">
-                    <div className="flex items-center px-3 rounded-md border bg-muted text-sm">+91</div>
-                    <Input
-                      id="phone"
-                      inputMode="numeric"
-                      placeholder="98765 43210"
-                      value={phone}
-                      onChange={(e) => setPhone(e.target.value)}
-                      maxLength={12}
-                    />
-                  </div>
-                </div>
-                <Button className="w-full h-11" onClick={sendOtp}>
-                  Send OTP <ArrowRight className="ml-2 h-4 w-4" />
-                </Button>
-                <p className="text-xs text-muted-foreground text-center">
-                  Demo mode — any 10-digit number and any 6-digit OTP will work.
-                </p>
-              </div>
-            </>
-          )}
+          <h1 className="text-2xl font-semibold tracking-tight">
+            {mode === "signin" ? "Sign in" : "Create your account"}
+          </h1>
+          <p className="text-muted-foreground mt-1 text-sm">
+            {mode === "signin"
+              ? "Access the UCOIN operations platform."
+              : "New vendors and staff can register here."}
+          </p>
 
-          {step === "otp" && (
-            <>
-              <h1 className="text-2xl font-semibold tracking-tight">Enter OTP</h1>
-              <p className="text-muted-foreground mt-1 text-sm">
-                Sent to +91 {phone}.{" "}
-                <button className="text-primary underline" onClick={() => setStep("phone")}>
-                  Change
-                </button>
-              </p>
-              <div className="mt-8 space-y-6">
-                <InputOTP maxLength={6} value={otp} onChange={setOtp}>
-                  <InputOTPGroup>
-                    {[0, 1, 2, 3, 4, 5].map((i) => (
-                      <InputOTPSlot key={i} index={i} />
-                    ))}
-                  </InputOTPGroup>
-                </InputOTP>
-                <Button className="w-full h-11" onClick={verifyOtp}>
-                  Verify & continue
-                </Button>
+          <div className="mt-8 space-y-4">
+            {mode === "signup" && (
+              <div className="space-y-2">
+                <Label htmlFor="name">Full name</Label>
+                <Input id="name" value={name} onChange={(e) => setName(e.target.value)} placeholder="Your name" />
               </div>
-            </>
-          )}
+            )}
+            <div className="space-y-2">
+              <Label htmlFor="email">Email</Label>
+              <Input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@company.com" />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="password">Password</Label>
+              <Input id="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" />
+            </div>
 
-          {step === "role" && (
-            <>
-              <h1 className="text-2xl font-semibold tracking-tight">Choose your role</h1>
-              <p className="text-muted-foreground mt-1 text-sm">
-                Preview the platform from any role.
-              </p>
-              <div className="mt-6 space-y-2">
-                {ROLES.map((r) => (
-                  <button
-                    key={r.value}
-                    onClick={() => setRole(r.value)}
-                    className={`w-full text-left rounded-lg border p-4 transition-colors ${
-                      role === r.value
-                        ? "border-primary bg-primary-soft"
-                        : "border-border hover:bg-muted"
-                    }`}
-                  >
-                    <div className="font-medium">{r.label}</div>
-                    <div className="text-xs text-muted-foreground mt-0.5">{r.description}</div>
-                  </button>
-                ))}
-                <Button className="w-full h-11 mt-4" onClick={enter}>
-                  Enter platform <ArrowRight className="ml-2 h-4 w-4" />
-                </Button>
+            <Button className="w-full h-11" onClick={submit} disabled={busy}>
+              {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : (
+                <>{mode === "signin" ? "Sign in" : "Create account"} <ArrowRight className="ml-2 h-4 w-4" /></>
+              )}
+            </Button>
+
+            <div className="relative py-2">
+              <div className="absolute inset-0 flex items-center"><span className="w-full border-t" /></div>
+              <div className="relative flex justify-center text-xs uppercase">
+                <span className="bg-background px-2 text-muted-foreground">or</span>
               </div>
-            </>
-          )}
+            </div>
+
+            <Button variant="outline" className="w-full h-11" onClick={google} disabled={busy}>
+              Continue with Google
+            </Button>
+
+            <p className="text-sm text-center text-muted-foreground">
+              {mode === "signin" ? "New to UCOIN?" : "Already have an account?"}{" "}
+              <button className="text-primary font-medium hover:underline" onClick={() => setMode(mode === "signin" ? "signup" : "signin")}>
+                {mode === "signin" ? "Create an account" : "Sign in"}
+              </button>
+            </p>
+          </div>
 
           <div className="mt-10 pt-6 border-t text-xs text-muted-foreground flex items-center justify-between">
             <span>© Kissan Energy India Pvt. Ltd.</span>
@@ -199,6 +195,3 @@ function Stat({ kpi, label }: { kpi: string; label: string }) {
     </Card>
   );
 }
-
-// unused imports guard
-void Droplets; void Truck; void Shield; void MapPin;

@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { PageHeader, StatCard, StatusBadge } from "@/components/page-shell";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -13,7 +13,7 @@ import {
   FileSpreadsheet, Receipt, Wallet, AlertCircle,
 } from "lucide-react";
 import { invoices as INV, type InvoiceStatus } from "@/lib/mock-data";
-import { getSession, type Session } from "@/lib/session";
+import { useAuthSession } from "@/lib/session";
 
 export const Route = createFileRoute("/app/invoices")({
   component: InvoicesPage,
@@ -22,13 +22,12 @@ export const Route = createFileRoute("/app/invoices")({
 const STATUSES: (InvoiceStatus | "All")[] = ["All", "Draft", "Sent", "Paid", "Overdue", "Cancelled"];
 
 function InvoicesPage() {
-  const [session, setS] = useState<Session | null>(null);
-  useEffect(() => setS(getSession()), []);
+  const { user } = useAuthSession();
   const [q, setQ] = useState("");
   const [status, setStatus] = useState<InvoiceStatus | "All">("All");
 
-  const isVendor = session?.role === "vendor";
-  const isAccounts = session?.role === "accounts";
+  const isVendor = user?.role === "vendor";
+  const isAccounts = user?.role === "accounts";
 
   const rows = useMemo(() => {
     return INV.filter((i) => {
