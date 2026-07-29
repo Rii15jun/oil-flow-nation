@@ -27,7 +27,7 @@ function InvoicesPage() {
   const [status, setStatus] = useState<InvoiceStatus | "All">("All");
 
   const isVendor = user?.role === "vendor";
-  const isAccounts = session?.role === "accounts";
+  const isAccounts = user?.role === "accounts";
 
   const rows = useMemo(() => {
     return INV.filter((i) => {
