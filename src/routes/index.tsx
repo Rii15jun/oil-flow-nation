@@ -9,7 +9,14 @@ import { lovable } from "@/integrations/lovable/index";
 import { toast } from "sonner";
 import { ArrowRight, Coins, Loader2 } from "lucide-react";
 
+function safeNext(value: unknown): string {
+  if (typeof value !== "string") return "";
+  if (!value.startsWith("/") || value.startsWith("//")) return "";
+  return value;
+}
+
 export const Route = createFileRoute("/")({
+  validateSearch: (s: Record<string, unknown>) => ({ next: safeNext(s.next) }),
   head: () => ({
     meta: [
       { title: "Sign in — UCOIN App" },
@@ -20,6 +27,7 @@ export const Route = createFileRoute("/")({
   }),
   component: Landing,
 });
+
 
 function Landing() {
   const navigate = useNavigate();
