@@ -1,0 +1,205 @@
+{
+  "version": 1,
+  "sdk_version": "0.26.2",
+  "path": "/mcp",
+  "auth": {
+    "type": "oauth",
+    "issuer": "https://kgoxzyzevvfdcnqhlibg.supabase.co/auth/v1",
+    "accepted_audiences": [
+      "authenticated"
+    ]
+  },
+  "mcp": {
+    "server": {
+      "name": "kissan-oil-connect",
+      "version": "0.1.0",
+      "title": "Kissan Oil Connect"
+    },
+    "tools": [
+      {
+        "name": "list_vendors",
+        "title": "List vendors",
+        "description": "List UCO vendors visible to the signed-in user, optionally filtered by status, state or name.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "status": {
+              "description": "Filter by vendor status, e.g. active, pending, suspended.",
+              "type": "string"
+            },
+            "state": {
+              "description": "Filter by Indian state name.",
+              "type": "string"
+            },
+            "search": {
+              "description": "Case-insensitive match on vendor name.",
+              "type": "string"
+            },
+            "limit": {
+              "description": "Max rows to return (default 20).",
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100
+            }
+          }
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "list_pickups",
+        "title": "List pickup requests",
+        "description": "List UCO pickup requests visible to the signed-in user, optionally filtered by status, vendor or date range.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "status": {
+              "description": "Filter by pickup status, e.g. requested, scheduled, completed.",
+              "type": "string"
+            },
+            "vendor_id": {
+              "description": "Only pickups for this vendor id.",
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+            },
+            "from_date": {
+              "description": "Earliest pickup date, ISO format YYYY-MM-DD.",
+              "type": "string"
+            },
+            "to_date": {
+              "description": "Latest pickup date, ISO format YYYY-MM-DD.",
+              "type": "string"
+            },
+            "limit": {
+              "description": "Max rows to return (default 20).",
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100
+            }
+          }
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "create_pickup_request",
+        "title": "Create pickup request",
+        "description": "Create a new UCO pickup request for a vendor on a given date.",
+        "annotations": {
+          "readOnlyHint": false,
+          "destructiveHint": false,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "vendor_id": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "description": "The vendor the pickup is for."
+            },
+            "pickup_date": {
+              "type": "string",
+              "description": "Requested pickup date, ISO format YYYY-MM-DD."
+            },
+            "drum_count": {
+              "description": "Estimated number of drums.",
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            },
+            "quantity_kg": {
+              "description": "Estimated quantity in kilograms.",
+              "type": "number",
+              "minimum": 0
+            },
+            "is_emergency": {
+              "description": "Mark as an emergency pickup.",
+              "type": "boolean"
+            },
+            "notes": {
+              "description": "Free-text notes for the operations team.",
+              "type": "string"
+            }
+          },
+          "required": [
+            "vendor_id",
+            "pickup_date"
+          ]
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "list_invoices",
+        "title": "List invoices",
+        "description": "List invoices visible to the signed-in user, optionally filtered by status or vendor.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "status": {
+              "description": "Filter by invoice status, e.g. draft, sent, paid, overdue.",
+              "type": "string"
+            },
+            "vendor_id": {
+              "description": "Only invoices for this vendor id.",
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+            },
+            "limit": {
+              "description": "Max rows to return (default 20).",
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100
+            }
+          }
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "collection_summary",
+        "title": "Collection summary",
+        "description": "Summarise UCO collection volume and invoiced value over a date range for the signed-in user's accessible data.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "from_date": {
+              "description": "Start date, ISO format YYYY-MM-DD.",
+              "type": "string"
+            },
+            "to_date": {
+              "description": "End date, ISO format YYYY-MM-DD.",
+              "type": "string"
+            }
+          }
+        },
+        "outputSchema": null
+      }
+    ]
+  }
+}
