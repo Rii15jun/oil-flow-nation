@@ -31,6 +31,7 @@ export const Route = createFileRoute("/")({
 
 function Landing() {
   const navigate = useNavigate();
+  const { next } = Route.useSearch();
   const [mode, setMode] = useState<"signin" | "signup">("signin");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -38,14 +39,18 @@ function Landing() {
   const [busy, setBusy] = useState(false);
 
   useEffect(() => {
+    const go = () => {
+      if (next) window.location.href = next;
+      else navigate({ to: "/app/dashboard" });
+    };
     supabase.auth.getSession().then(({ data }) => {
-      if (data.session) navigate({ to: "/app/dashboard" });
+      if (data.session) go();
     });
     const { data: sub } = supabase.auth.onAuthStateChange((_e, session) => {
-      if (session) navigate({ to: "/app/dashboard" });
+      if (session) go();
     });
     return () => sub.subscription.unsubscribe();
-  }, [navigate]);
+  }, [navigate, next]);
 
   const submit = async () => {
     if (!email || !password) {
@@ -59,7 +64,7 @@ function Landing() {
           email,
           password,
           options: {
-            emailRedirectTo: `${window.location.origin}/app/dashboard`,
+            emailRedirectTo: `${window.location.origin}${next || "/app/dashboard"}`,
             data: { full_name: name || email },
           },
         });
@@ -80,13 +85,14 @@ function Landing() {
   const google = async () => {
     setBusy(true);
     const result = await lovable.auth.signInWithOAuth("google", {
-      redirect_uri: window.location.origin,
+      redirect_uri: next ? `${window.location.origin}${next}` : window.location.origin,
     });
     if (result.error) {
       toast.error(result.error.message ?? "Google sign-in failed");
       setBusy(false);
     }
   };
+
 
   return (
     <div className="min-h-screen grid lg:grid-cols-2">
